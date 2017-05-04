@@ -18,6 +18,11 @@ namespace Lorenz_Attractors
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        const float FPS = 1 / 60f;
+        RessourcesManager<Texture2D> TextureManager { get; set; }
+        InputManager InputManager { get; set; }
+        Caméra Camera { get; set; }
+        bool Sleep { get; set; }
 
         public Game1()
         {
@@ -33,8 +38,17 @@ namespace Lorenz_Attractors
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
+            Sleep = false;
+            InputManager = new InputManager(this);
+            Services.AddService(typeof(InputManager), InputManager);
+            TextureManager = new RessourcesManager<Texture2D>(this, "Textures");
+            Services.AddService(typeof(RessourcesManager<Texture2D>), TextureManager);
+            Components.Add(InputManager);
+            Components.Add(new Afficheur3D(this));
+            Camera = new CaméraJoueur(this, new Vector3(-5, 0, 0), new Vector3(20, 0, 0), Vector3.Up, FPS, 500);
+            Services.AddService(typeof(Caméra), Camera);
+            Components.Add(new SphèreTexturée(this, 1, Vector3.Zero, new Vector3(0, 0, 0), 1, new Vector2(20, 20), "Blanc", FPS));
+            Components.Add(Camera);
             base.Initialize();
         }
 
@@ -66,13 +80,38 @@ namespace Lorenz_Attractors
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+            if (!Sleep)
+            {
+                // Allows the game to exit
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+                    this.Exit();
 
-            // TODO: Add your update logic here
+                // TODO: Add your update logic here
 
-            base.Update(gameTime);
+                base.Update(gameTime);
+            }
+        }
+
+        protected override void OnActivated(object sender, EventArgs args)
+        {
+            Sleep = false;
+            base.OnActivated(sender, args);
+            if (Camera != null)
+            {
+                (Camera as CaméraJoueur).EstCaméraSourisActivée = true;
+            }
+            IsMouseVisible = false;
+        }
+
+        protected override void OnDeactivated(object sender, EventArgs args)
+        {
+            Sleep = true;
+            base.OnDeactivated(sender, args);
+            if (Camera != null)
+            {
+                (Camera as CaméraJoueur).EstCaméraSourisActivée = false;
+            }
+            IsMouseVisible = true;
         }
 
         /// <summary>
