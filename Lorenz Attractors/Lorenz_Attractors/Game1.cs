@@ -16,6 +16,8 @@ namespace Lorenz_Attractors
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
+        const float IntervalleMAJ = 1/60f;
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         const float FPS = 1 / 60f;
@@ -23,11 +25,26 @@ namespace Lorenz_Attractors
         InputManager InputManager { get; set; }
         Caméra Camera { get; set; }
         bool Sleep { get; set; }
+        SphèreTexturée Sphère { get; set; }
+
+        float TempsÉcouléDepuisMAJ { get; set; }
+
+        float x = 0.01f;
+        float y = 0;
+        float z = 0;
+
+        float a = 10;
+        float b = 28;
+        float c = 8 / 3f;
+
+        Vector3 Position;
+        Vector3 AnciennePosition;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            IsFixedTimeStep = false;
         }
 
         /// <summary>
@@ -38,17 +55,23 @@ namespace Lorenz_Attractors
         /// </summary>
         protected override void Initialize()
         {
+            Position = new Vector3(x, y, z);
+            AnciennePosition = Position;
             Sleep = false;
             InputManager = new InputManager(this);
             Services.AddService(typeof(InputManager), InputManager);
             TextureManager = new RessourcesManager<Texture2D>(this, "Textures");
             Services.AddService(typeof(RessourcesManager<Texture2D>), TextureManager);
+            Services.AddService(typeof(RessourcesManager<SpriteFont>), new RessourcesManager<SpriteFont>(this, "Fonts"));
             Components.Add(InputManager);
             Components.Add(new Afficheur3D(this));
             Camera = new CaméraJoueur(this, new Vector3(-5, 0, 0), new Vector3(20, 0, 0), Vector3.Up, FPS, 500);
             Services.AddService(typeof(Caméra), Camera);
-            Components.Add(new SphèreTexturée(this, 1, Vector3.Zero, new Vector3(0, 0, 0), 1, new Vector2(20, 20), "Blanc", FPS));
+            //Components.Add(new SphèreTexturée(this, 1, Vector3.Zero, new Vector3(0, 0, 0), 1, new Vector2(20, 20), "Blanc", FPS));
+            Sphère = new SphèreTexturée(this, 1, Vector3.Zero, Position, 0.1f, new Vector2(20, 20), "Blanc", FPS);
+            Components.Add(Sphère);
             Components.Add(Camera);
+            Components.Add(new AfficheurFPS(this, "Arial", Color.Black, IntervalleMAJ));
             base.Initialize();
         }
 
@@ -88,8 +111,40 @@ namespace Lorenz_Attractors
 
                 // TODO: Add your update logic here
 
+                float TempsÉcoulé = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                TempsÉcouléDepuisMAJ += TempsÉcoulé;
+                if (TempsÉcouléDepuisMAJ >= IntervalleMAJ)
+                {
+                    EffectuerMiseÀJour();
+                    TempsÉcouléDepuisMAJ = 0;
+                }
+
                 base.Update(gameTime);
             }
+        }
+
+        void EffectuerMiseÀJour()
+        {
+            float dt = 0.01f;
+            float dx = (a * (y - x)) * dt;
+            float dy = (x * (b - z) - y) * dt;
+            float dz = (x * y - c * z) * dt;
+            x = x + dx;
+            y = y + dy;
+            z = z + dz;
+
+            AnciennePosition = Position;
+            Position = new Vector3(x, y, z);
+
+            //Window.Title = Position.ToString();
+
+            Components.Add(new CylindreTexturé(this, 1f, new Vector3(0, 0, 0),
+                                    Vector3.Zero, new Vector2(1, 1), new Vector2(20, 20),
+                                    "Blanc", IntervalleMAJ, AnciennePosition,
+                                    Position));
+
+            //Sphère.AjouterSphère(Position);
+
         }
 
         protected override void OnActivated(object sender, EventArgs args)

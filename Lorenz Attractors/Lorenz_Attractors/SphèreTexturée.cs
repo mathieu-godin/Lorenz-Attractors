@@ -5,28 +5,30 @@ using Microsoft.Xna.Framework;
 
 namespace Lorenz_Attractors
 {
-   public class SphèreTexturée : PrimitiveDeBaseAnimée //Plan
-   {
-      //Initialement gérées par le constructeur
-      readonly float Rayon;
-      readonly int NbColonnes;
-      readonly int NbLignes;
-      readonly string NomTexture;
+    public class SphèreTexturée : PrimitiveDeBaseAnimée //Plan
+    {
+        //Initialement gérées par le constructeur
+        readonly float Rayon;
+        readonly int NbColonnes;
+        readonly int NbLignes;
+        readonly string NomTexture;
 
-      readonly Vector3 Origine;
+        readonly Vector3 Origine;
 
-      //Initialement gérées par des fonctions appellées par base.Initialize()
-      Vector3[,] PtsSommets { get; set; }
-      Vector2[,] PtsTexture { get; set; }
-      VertexPositionTexture[] Sommets { get; set; }
-      BasicEffect EffetDeBase { get; set; }
-      //BlendState GestionAlpha { get; set; }
+        //Initialement gérées par des fonctions appellées par base.Initialize()
+        Vector3[,] PtsSommets { get; set; }
+        Vector2[,] PtsTexture { get; set; }
+        VertexPositionTexture[] Sommets { get; set; }
+        BasicEffect EffetDeBase { get; set; }
+        //BlendState GestionAlpha { get; set; }
 
-      int NbTrianglesParStrip { get; set; }
+        int NbTrianglesParStrip { get; set; }
 
-      //Initialement gérées par LoadContent()
-      RessourcesManager<Texture2D> GestionnaireDeTextures { get; set; }
-      Texture2D TextureSphère { get; set; }
+        //Initialement gérées par LoadContent()
+        RessourcesManager<Texture2D> GestionnaireDeTextures { get; set; }
+        Texture2D TextureSphère { get; set; }
+
+        List<Vector3> Sphères { get; set; }
 
       public SphèreTexturée(Game jeu, float homothétieInitiale, Vector3 rotationInitiale,
                             Vector3 positionInitiale, float rayon, Vector2 charpente,
@@ -43,6 +45,7 @@ namespace Lorenz_Attractors
 
       public override void Initialize()
       {
+            Sphères = new List<Vector3>();
          NbTrianglesParStrip = NbColonnes * 2;
          NbSommets = (NbTrianglesParStrip + 2) * NbLignes;
 
@@ -122,26 +125,37 @@ namespace Lorenz_Attractors
          base.LoadContent();
       }
 
+
+        public void AjouterSphère(Vector3 v)
+        {
+            Sphères.Add(v);
+        }
+
       public override void Draw(GameTime gameTime)
       {
-         EffetDeBase.World = GetMonde();
-         EffetDeBase.View = CaméraJeu.Vue;
-         EffetDeBase.Projection = CaméraJeu.Projection;
-         foreach (EffectPass passeEffet in EffetDeBase.CurrentTechnique.Passes)
-         {
-            passeEffet.Apply();
-            for (int i = 0; i < NbLignes; ++i)
+            for(int j = 0; j < Sphères.Count; j++)
             {
-               DessinerTriangleStrip(i);
+                Position = Sphères[j]; 
+                CalculerMatriceMonde();
+                EffetDeBase.World = GetMonde();
+                EffetDeBase.View = CaméraJeu.Vue;
+                EffetDeBase.Projection = CaméraJeu.Projection;
+                foreach (EffectPass passeEffet in EffetDeBase.CurrentTechnique.Passes)
+                {
+                    passeEffet.Apply();
+                    for (int i = 0; i < NbLignes; ++i)
+                    {
+                        DessinerTriangleStrip(i);
+                    }
+                }
             }
-         }
       }
 
-      void DessinerTriangleStrip(int noStrip)
-      {
-         int vertexOffset = (noStrip * NbSommets) / NbLignes;
-         GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, Sommets, vertexOffset, NbTrianglesParStrip);
-      }
-
+        void DessinerTriangleStrip(int noStrip)
+        {
+            int vertexOffset = (noStrip * NbSommets) / NbLignes;
+            GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, Sommets, vertexOffset, NbTrianglesParStrip);
+            Game.Window.Title = PositionInitiale.ToString();
+        }
    }
 }

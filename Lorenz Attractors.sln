@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lorenz_Attractors", "Lorenz Attractors\Lorenz_Attractors\Lorenz_Attractors.csproj", "{64F4B9EC-C9B6-411C-BD30-8C205FD3AD43}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Lorenz_AttractorsContent", "Lorenz Attractors\Lorenz_AttractorsContent\Lorenz_AttractorsContent.contentproj", "{952767C4-F6C7-4355-BB68-7F2EBD0B3CB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lorenz_AttractorsContent", "Lorenz Attractors\Lorenz_AttractorsContent\Lorenz_AttractorsContent.contentproj", "{952767C4-F6C7-4355-BB68-7F2EBD0B3CB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
