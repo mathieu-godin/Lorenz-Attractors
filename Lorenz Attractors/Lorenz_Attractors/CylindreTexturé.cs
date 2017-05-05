@@ -27,7 +27,8 @@ namespace Lorenz_Attractors
         //Initialement gérées par des fonctions appellées par base.Initialize()
         Vector3[,] PtsSommets { get; set; }
         Vector2[,] PtsTexture { get; set; }
-        VertexPositionTexture[] Sommets { get; set; }
+        //VertexPositionTexture[] Sommets { get; set; }
+        VertexPositionColor[] Sommets { get; set; }
         BasicEffect EffetDeBase { get; set; }
 
         int NbTrianglesParStrip { get; set; }
@@ -50,13 +51,14 @@ namespace Lorenz_Attractors
 
         public CylindreTexturé(Game jeu, float homothétieInitiale, Vector3 rotationInitiale,
                               Vector3 positionInitiale, Vector2 étendue, Vector2 charpente,
-                              string nomTexture, float intervalleMAJ, Vector3 extrémité1, Vector3 extrémité2)
+                              /*string nomTexture*/Color color, float intervalleMAJ, Vector3 extrémité1, Vector3 extrémité2)
             : base(jeu, homothétieInitiale, rotationInitiale, positionInitiale, intervalleMAJ)
         {
             //Delta = étendue / charpente;
             NbColonnes = (int)charpente.X;
             NbLignes = (int)charpente.Y;
-            NomTexture = nomTexture;
+            //NomTexture = nomTexture;
+            Color = color;
 
             //Origine = new Vector3(0,0,0);
             Origine = new Vector3(-étendue.X / 2, -étendue.Y / 2, 0);
@@ -80,15 +82,17 @@ namespace Lorenz_Attractors
         {
             PtsSommets = new Vector3[NbColonnes + 1, NbLignes + 1];
             PtsTexture = new Vector2[NbColonnes + 1, NbLignes + 1];
-            Sommets = new VertexPositionTexture[NbSommets];
+            //Sommets = new VertexPositionTexture[NbSommets];
+            Sommets = new VertexPositionColor[NbSommets];
         }
 
         protected void InitialiserParamètresEffetDeBase()
         {
-            TextureCylindre = GestionnaireDeTextures.Find(NomTexture);
+            //TextureCylindre = GestionnaireDeTextures.Find(NomTexture);
             EffetDeBase = new BasicEffect(GraphicsDevice);
-            EffetDeBase.TextureEnabled = true;
-            EffetDeBase.Texture = TextureCylindre;
+            //EffetDeBase.TextureEnabled = true;
+            EffetDeBase.VertexColorEnabled = true;
+            //EffetDeBase.Texture = TextureCylindre;
         }
 
         protected override void InitialiserSommets()
@@ -122,6 +126,8 @@ namespace Lorenz_Attractors
             }
         }
 
+        Color Color { get; set; }
+
         protected void AffecterSommets()
         {
             int NoSommet = -1;
@@ -129,15 +135,17 @@ namespace Lorenz_Attractors
             {
                 for (int i = 0; i < NbColonnes + 1; ++i)
                 {
-                    Sommets[++NoSommet] = new VertexPositionTexture(PtsSommets[i, j], PtsTexture[i, j]);
-                    Sommets[++NoSommet] = new VertexPositionTexture(PtsSommets[i, j + 1], PtsTexture[i, j + 1]);
+                    //Sommets[++NoSommet] = new VertexPositionTexture(PtsSommets[i, j], PtsTexture[i, j]);
+                    //Sommets[++NoSommet] = new VertexPositionTexture(PtsSommets[i, j + 1], PtsTexture[i, j + 1]);
+                    Sommets[++NoSommet] = new VertexPositionColor(PtsSommets[i, j], Color);
+                    Sommets[++NoSommet] = new VertexPositionColor(PtsSommets[i, j + 1], Color);
                 }
             }
         }
 
         protected override void LoadContent()
         {
-            GestionnaireDeTextures = Game.Services.GetService(typeof(RessourcesManager<Texture2D>)) as RessourcesManager<Texture2D>;
+            //GestionnaireDeTextures = Game.Services.GetService(typeof(RessourcesManager<Texture2D>)) as RessourcesManager<Texture2D>;
             base.LoadContent();
         }
 
