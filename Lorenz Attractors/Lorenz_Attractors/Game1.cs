@@ -123,8 +123,8 @@ namespace Lorenz_Attractors
             }
         }
 
-        int R, G, B;
-        double Hu;
+        int R = 0, G = 0, B = 0;
+        double Hu = 0, S = 1, V = 1;
 
         void EffectuerMiseÀJour()
         {
@@ -140,7 +140,9 @@ namespace Lorenz_Attractors
             Position = new Vector3(x, y, z);
 
             //Window.Title = Position.ToString();
-            HsvToRgb(Hu, 255, 255, out R, out G, out B);
+            HsvToRgb(Hu, S, V, out R, out G, out B);
+            Window.Title = new Color(R, G, B).ToString();
+
             Hu += 0.1;
             if (Hu > 255)
             {
