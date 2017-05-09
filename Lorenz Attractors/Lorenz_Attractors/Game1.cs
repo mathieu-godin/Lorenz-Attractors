@@ -65,7 +65,7 @@ namespace Lorenz_Attractors
             Services.AddService(typeof(RessourcesManager<SpriteFont>), new RessourcesManager<SpriteFont>(this, "Fonts"));
             Components.Add(InputManager);
             Components.Add(new Afficheur3D(this));
-            Camera = new CaméraJoueur(this, new Vector3(-500, 0, 0), new Vector3(20, 0, 0), Vector3.Up, FPS, 10000);
+            Camera = new CaméraJoueur(this, new Vector3(-850, 0, 0), new Vector3(20, 0, 0), Vector3.Up, FPS, 10000);
             Services.AddService(typeof(Caméra), Camera);
             //Components.Add(new SphèreTexturée(this, 1, Vector3.Zero, new Vector3(0, 0, 0), 1, new Vector2(20, 20), "Blanc", FPS));
             Sphère = new SphèreTexturée(this, 1, Vector3.Zero, Position, 0.1f, new Vector2(20, 20), "Blanc", FPS);
@@ -141,7 +141,7 @@ namespace Lorenz_Attractors
 
             //Window.Title = Position.ToString();
             HsvToRgb(Hu, S, V, out R, out G, out B);
-            Window.Title = new Color(R, G, B).ToString();
+            Window.Title = Camera.Position.ToString();
 
             Hu += 0.1;
             if (Hu > 255)
@@ -291,7 +291,7 @@ namespace Lorenz_Attractors
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
 
