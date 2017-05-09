@@ -30,8 +30,8 @@ namespace Lorenz_Attractors
         float TempsÉcouléDepuisMAJ { get; set; }
 
         float x = 0.01f;
-        float y = 0;
-        float z = 0;
+        float y = 0f;
+        float z = 0f;
 
         float a = 10;
         float b = 28;
@@ -65,7 +65,7 @@ namespace Lorenz_Attractors
             Services.AddService(typeof(RessourcesManager<SpriteFont>), new RessourcesManager<SpriteFont>(this, "Fonts"));
             Components.Add(InputManager);
             Components.Add(new Afficheur3D(this));
-            Camera = new CaméraJoueur(this, new Vector3(-5, 0, 0), new Vector3(20, 0, 0), Vector3.Up, FPS, 500);
+            Camera = new CaméraJoueur(this, new Vector3(-500, 0, 0), new Vector3(20, 0, 0), Vector3.Up, FPS, 10000);
             Services.AddService(typeof(Caméra), Camera);
             //Components.Add(new SphèreTexturée(this, 1, Vector3.Zero, new Vector3(0, 0, 0), 1, new Vector2(20, 20), "Blanc", FPS));
             Sphère = new SphèreTexturée(this, 1, Vector3.Zero, Position, 0.1f, new Vector2(20, 20), "Blanc", FPS);
@@ -148,10 +148,12 @@ namespace Lorenz_Attractors
             {
                 Hu = 0;
             }
+            int constanteGrosseur = 10;
+
             Components.Add(new CylindreTexturé(this, 1f, new Vector3(0, 0, 0),
                                     Vector3.Zero, new Vector2(1, 1), new Vector2(20, 20),
-                                    /*"Blanc"*/new Color(R, G, B), IntervalleMAJ, AnciennePosition,
-                                    Position));
+                                    /*"Blanc"*/new Color(R, G, B), IntervalleMAJ, constanteGrosseur * AnciennePosition,
+                                    constanteGrosseur * Position));
 
             //Sphère.AjouterSphère(Position);
 
